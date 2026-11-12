@@ -1,0 +1,68 @@
+<div class="auth-page">
+  <div class="auth-card-wrapper">
+    <pd-card [noBorder]="false" class="auth-card-inner">
+      <!-- Logo -->
+      <div class="auth-logo">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="8" fill="#8b5cf6"/>
+          <path d="M10 26V14l8-6 8 6v12H22v-7h-4v7H10z" fill="white"/>
+        </svg>
+        <span>MeuAcervo</span>
+      </div>
+
+      <h2>Entrar na sua conta</h2>
+      <p class="auth-subtitle">Gerencie seu acervo pessoal com facilidade.</p>
+
+      <!-- Alert -->
+      <app-alert-message
+        *ngIf="errorMessage"
+        type="error"
+        [message]="errorMessage"
+        (dismissed)="errorMessage = ''"
+      ></app-alert-message>
+
+      <!-- Form -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <pd-input
+          id="email"
+          label="E-mail"
+          type="email"
+          formControlName="email"
+          placeholder="seu@email.com"
+          autocomplete="email"
+          [required]="true"
+          [error]="getEmailError()"
+        ></pd-input>
+
+        <pd-input
+          id="password"
+          label="Senha"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          [required]="true"
+          [error]="getPasswordError()"
+        ></pd-input>
+
+        <div class="auth-forgot">
+          <a routerLink="/auth/forgot-password">Esqueci minha senha</a>
+        </div>
+
+        <pd-button
+          type="submit"
+          variant="primary"
+          [fullWidth]="true"
+          [loading]="loading"
+        >
+          Entrar
+        </pd-button>
+      </form>
+
+      <div class="auth-footer">
+        <span>Não tem conta?</span>
+        <a routerLink="/auth/register">Criar conta</a>
+      </div>
+    </pd-card>
+  </div>
+</div>

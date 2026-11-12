@@ -1,0 +1,126 @@
+<!-- Page Header -->
+<pd-page-header
+  title="Meu Acervo"
+  [count]="loading ? null : total"
+  countSingular="item"
+  countPlural="itens"
+  [hasIcon]="true"
+>
+  <span header-icon>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 6h-2.18c.07-.44.18-.88.18-1.25C18 2.69 16.31 1 14.25 1c-1.21 0-2.21.57-2.95 1.4L10 4.01l-1.3-1.61C8.21 1.57 7.21 1 6 1 3.94 1 2.25 2.69 2.25 4.75c0 .37.1.81.17 1.25H2a2 2 0 00-2 2v2a2 2 0 002 2h.08L3 20c.08.84.84 1.5 1.72 1.5h14.56c.88 0 1.64-.66 1.72-1.5l.92-9.75H22a2 2 0 002-2V8a2 2 0 00-2-2zm-5.75-3.25c.55 0 1 .45 1 1 0 .56-.45 1-1 1-.56 0-1-.44-1-1 0-.55.44-1 1-1zM6 2.75c.55 0 1 .45 1 1 0 .56-.45 1-1 1-.56 0-1-.44-1-1 0-.55.44-1 1-1zM22 10H2V8h20v2z"/>
+    </svg>
+  </span>
+
+  <div actions>
+    <pd-button variant="primary" size="sm" (clicked)="goToNew()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+      </svg>
+      Novo Item
+    </pd-button>
+  </div>
+</pd-page-header>
+
+<!-- Filters Bar -->
+<div class="filters-bar" [formGroup]="filters">
+  <div class="filter-search-col">
+    <pd-search-input
+      formControlName="term"
+      placeholder="Buscar por nome, marca, modelo..."
+    ></pd-search-input>
+  </div>
+
+  <div class="filter-select-col">
+    <pd-select
+      formControlName="category"
+      [options]="categoryOptions"
+    ></pd-select>
+  </div>
+
+  <div class="filter-select-col">
+    <pd-select
+      formControlName="warranty_status"
+      [options]="warrantyStatuses"
+    ></pd-select>
+  </div>
+
+  <pd-button
+    variant="secondary"
+    size="sm"
+    (clicked)="clearFilters()"
+    title="Limpar filtros"
+  >
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+    </svg>
+  </pd-button>
+</div>
+
+<!-- Alert Message -->
+<app-alert-message
+  *ngIf="errorMessage"
+  type="error"
+  [message]="errorMessage"
+  (dismissed)="errorMessage=''"
+></app-alert-message>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-wrapper">
+  <app-loading-spinner [size]="32" label="Carregando itens..."></app-loading-spinner>
+</div>
+
+<!-- Empty State Component -->
+<pd-empty-state
+  *ngIf="!loading && products.length === 0"
+  title="Nenhum item encontrado"
+  description="Adicione seu primeiro item ao acervo para começar o controle de compras e garantias!"
+  actionLabel="+ Adicionar Item"
+  (actionClick)="goToNew()"
+></pd-empty-state>
+
+<!-- Product Grid using PdCard & PdBadge -->
+<div *ngIf="!loading && products.length > 0" class="products-grid">
+  <pd-card
+    *ngFor="let product of products"
+    [clickable]="true"
+    [compact]="true"
+    (cardClick)="goToDetail(product.id)"
+  >
+    <div class="product-card-top">
+      <div class="product-category-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 6h-2.18c.07-.44.18-.88.18-1.25C18 2.69 16.31 1 14.25 1c-1.21 0-2.21.57-2.95 1.4L10 4.01l-1.3-1.61C8.21 1.57 7.21 1 6 1 3.94 1 2.25 2.69 2.25 4.75c0 .37.1.81.17 1.25H2a2 2 0 00-2 2v2a2 2 0 002 2h.08L3 20c.08.84.84 1.5 1.72 1.5h14.56c.88 0 1.64-.66 1.72-1.5l.92-9.75H22a2 2 0 002-2V8a2 2 0 00-2-2z"/>
+        </svg>
+      </div>
+      <pd-badge
+        [status]="getBadgeStatus(product.warranty_status)"
+        [label]="warrantyLabel(product.warranty_status)"
+      ></pd-badge>
+    </div>
+
+    <h4 class="product-name">{{ product.name }}</h4>
+    <p class="product-brand">{{ product.brand }} · {{ product.model }}</p>
+
+    <div class="product-meta">
+      <span class="product-category">{{ product.category }}</span>
+      <span class="product-value">{{ formatCurrency(product.purchase_value) }}</span>
+    </div>
+
+    <div class="product-location" *ngIf="product.location">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg>
+      {{ product.location }}
+    </div>
+
+    <div class="product-card-footer">
+      <span class="view-details-action">
+        Ver detalhes
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+        </svg>
+      </span>
+    </div>
+  </pd-card>
+</div>

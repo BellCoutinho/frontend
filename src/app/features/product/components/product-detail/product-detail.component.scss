@@ -1,0 +1,240 @@
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.detail-container,
+.edit-container {
+  max-width: 980px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Metrics KPI Cards ──────────────────────────────────────
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metric-card {
+  background-color: var(--pd-bg-card, #2a2a2a);
+  border: 1px solid var(--pd-border, #3f3f3f);
+  border-radius: var(--pd-radius, 6px);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: border-color var(--pd-transition);
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.metric-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &--price {
+    background: rgba(139, 92, 246, 0.15);
+    color: var(--pd-accent-light, #a78bfa);
+  }
+
+  &--location {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+  }
+
+  &--warranty {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+  }
+
+  &--date {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+  }
+}
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.metric-label {
+  font-size: 0.725rem;
+  font-weight: 600;
+  color: var(--pd-text-muted, #71717a);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--pd-text-primary, #d4d4d8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.price {
+    color: #a78bfa;
+    font-size: 1.125rem;
+  }
+
+  &.highlight {
+    color: #ffffff;
+  }
+}
+
+// ── Detail Grid ───────────────────────────────────────────
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-full-width {
+  grid-column: 1 / -1;
+}
+
+.detail-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &.warranty-fields {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .field-label {
+    font-size: 0.725rem;
+    color: var(--pd-text-muted, #71717a);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field-value {
+    font-size: 0.9375rem;
+    color: var(--pd-text-primary, #d4d4d8);
+    font-weight: 500;
+
+    &.mono {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    &.code-value {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8125rem;
+      width: fit-content;
+      color: #e4e4e7;
+    }
+
+    &.sub-code {
+      font-size: 0.75rem;
+      color: var(--pd-text-muted);
+      word-break: break-all;
+    }
+
+    &.price {
+      color: var(--pd-accent-light, #a78bfa);
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    &.highlight {
+      color: #ffffff;
+      font-weight: 600;
+    }
+  }
+}
+
+.warranty-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.warranty-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--pd-border-subtle, #2d2d2d);
+}
+
+.warranty-desc {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--pd-text-secondary, #a1a1aa);
+}
+
+// ── Form in Edit Mode ─────────────────────────────────────
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--pd-border-subtle, #2d2d2d);
+  padding-bottom: 32px;
+}

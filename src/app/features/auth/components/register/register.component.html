@@ -1,0 +1,151 @@
+<div class="auth-page">
+  <div class="auth-card-wrapper register-card-wrapper">
+    <pd-card>
+      <!-- Logo -->
+      <div class="auth-logo">
+        <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="8" fill="#8b5cf6"/>
+          <path d="M10 26V14l8-6 8 6v12H22v-7h-4v7H10z" fill="white"/>
+        </svg>
+        <span>MeuAcervo</span>
+      </div>
+
+      <h2>Criar conta</h2>
+
+      <!-- Steps indicator -->
+      <div class="steps-indicator">
+        <div class="step" [class.active]="currentStep >= 1" [class.done]="currentStep > 1">
+          <span class="step-num">1</span>
+          <span class="step-label">Dados pessoais</span>
+        </div>
+        <div class="step-line" [class.done]="currentStep > 1"></div>
+        <div class="step" [class.active]="currentStep >= 2">
+          <span class="step-num">2</span>
+          <span class="step-label">Dados do espaço</span>
+        </div>
+      </div>
+
+      <app-alert-message *ngIf="errorMessage" type="error" [message]="errorMessage" (dismissed)="errorMessage=''"></app-alert-message>
+      <app-alert-message *ngIf="successMessage" type="success" [message]="successMessage" [dismissible]="false"></app-alert-message>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+        <!-- STEP 1: Dados Pessoais -->
+        <div *ngIf="currentStep === 1">
+          <div class="form-row">
+            <pd-input
+              label="Nome"
+              formControlName="first_name"
+              placeholder="João"
+              [required]="true"
+              [error]="getError('first_name')"
+            ></pd-input>
+
+            <pd-input
+              label="Sobrenome"
+              formControlName="last_name"
+              placeholder="Silva"
+              [required]="true"
+              [error]="getError('last_name')"
+            ></pd-input>
+          </div>
+
+          <pd-input
+            label="E-mail"
+            type="email"
+            formControlName="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+            [required]="true"
+            [error]="getError('email')"
+          ></pd-input>
+
+          <pd-input
+            label="Senha"
+            type="password"
+            formControlName="password"
+            placeholder="Mínimo 8 caracteres"
+            autocomplete="new-password"
+            [required]="true"
+            [error]="getError('password')"
+          ></pd-input>
+
+          <pd-input
+            label="Confirmar senha"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Repita a senha"
+            autocomplete="new-password"
+            [required]="true"
+            [error]="getConfirmPasswordError()"
+          ></pd-input>
+
+          <div style="margin-top: 20px;">
+            <pd-button
+              type="button"
+              variant="primary"
+              [fullWidth]="true"
+              (clicked)="nextStep()"
+            >
+              Próximo →
+            </pd-button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Dados do Espaço -->
+        <div *ngIf="currentStep === 2">
+          <pd-input
+            label="Nome do espaço"
+            formControlName="space_name"
+            placeholder="Minha casa"
+            [required]="true"
+            [error]="getError('space_name')"
+          ></pd-input>
+
+          <pd-input
+            label="Endereço"
+            formControlName="space_address"
+            placeholder="Rua das Flores, 123"
+            [required]="true"
+            [error]="getError('space_address')"
+          ></pd-input>
+
+          <pd-input
+            label="Unidade / Número"
+            formControlName="utility_unit_number"
+            placeholder="Apto 42"
+            [required]="true"
+            [error]="getError('utility_unit_number')"
+          ></pd-input>
+
+          <div class="step2-actions">
+            <pd-button
+              type="button"
+              variant="secondary"
+              (clicked)="prevStep()"
+              [disabled]="loading"
+            >
+              ← Voltar
+            </pd-button>
+
+            <pd-button
+              type="submit"
+              variant="primary"
+              [loading]="loading"
+              style="flex: 1"
+              [fullWidth]="true"
+            >
+              Concluir Cadastro
+            </pd-button>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="auth-footer">
+        <span>Já tem conta?</span>
+        <a routerLink="/auth/login">Fazer login</a>
+      </div>
+    </pd-card>
+  </div>
+</div>

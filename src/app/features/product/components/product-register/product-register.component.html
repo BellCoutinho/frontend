@@ -1,0 +1,166 @@
+<!-- Page Header -->
+<pd-page-header
+  title="Cadastrar Novo Item"
+  subtitle="Preencha as informações do item para inclusão no seu acervo"
+  [showBack]="true"
+  (back)="goBack()"
+>
+  <div actions>
+    <pd-button variant="secondary" size="sm" (clicked)="goBack()">
+      Cancelar
+    </pd-button>
+    <pd-button
+      type="button"
+      variant="primary"
+      size="sm"
+      [loading]="loading"
+      (clicked)="onSubmit()"
+    >
+      Salvar Item
+    </pd-button>
+  </div>
+</pd-page-header>
+
+<div class="register-container">
+  <!-- Alerts -->
+  <app-alert-message
+    *ngIf="errorMessage"
+    type="error"
+    [message]="errorMessage"
+    (dismissed)="errorMessage=''"
+  ></app-alert-message>
+  <app-alert-message
+    *ngIf="successMessage"
+    type="success"
+    [message]="successMessage"
+    [dismissible]="false"
+  ></app-alert-message>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+    <!-- Section 1: Informações Básicas -->
+    <pd-form-section
+      title="Informações Básicas"
+      description="Identificação principal do item no seu espaço"
+    >
+      <div class="form-grid-2">
+        <pd-input
+          label="Nome do Item"
+          formControlName="name"
+          placeholder="Ex: Geladeira, Smart TV 55', Sofá 3 Lugares..."
+          [required]="true"
+          [error]="getError('name')"
+        ></pd-input>
+
+        <pd-select
+          label="Categoria"
+          formControlName="category"
+          placeholder="Selecione uma categoria..."
+          [options]="categoryOptions"
+          [required]="true"
+          [error]="getError('category')"
+        ></pd-select>
+      </div>
+
+      <div class="form-grid-2">
+        <pd-input
+          label="Marca"
+          formControlName="brand"
+          placeholder="Ex: Samsung, LG, Tramontina, Apple..."
+          [required]="true"
+          [error]="getError('brand')"
+        ></pd-input>
+
+        <pd-input
+          label="Modelo"
+          formControlName="model"
+          placeholder="Ex: Galaxy S22, 55NANO80, Inox..."
+          [required]="true"
+          [error]="getError('model')"
+        ></pd-input>
+      </div>
+
+      <pd-input
+        label="Localização no Espaço"
+        formControlName="location"
+        placeholder="Ex: Cozinha, Sala de Estar, Escritório, Quarto Suíte..."
+        hint="Cômodo ou lugar onde o item fica guardado"
+        [required]="true"
+        [error]="getError('location')"
+      ></pd-input>
+    </pd-form-section>
+
+    <!-- Section 2: Dados de Compra -->
+    <pd-form-section
+      title="Dados de Compra"
+      description="Valores financeiros e rastreabilidade patrimonial"
+    >
+      <div class="form-grid-3">
+        <pd-input
+          label="Valor de Compra (R$)"
+          type="number"
+          formControlName="purchase_value"
+          placeholder="0.00"
+          [required]="true"
+          [error]="getError('purchase_value')"
+        ></pd-input>
+
+        <pd-input
+          label="Data da Compra"
+          type="date"
+          formControlName="purchase_date"
+        ></pd-input>
+
+        <pd-input
+          label="Número de Série"
+          formControlName="serial_number"
+          placeholder="SN / Service Tag"
+        ></pd-input>
+      </div>
+    </pd-form-section>
+
+    <!-- Section 3: Garantia -->
+    <pd-form-section
+      title="Garantia e Cobertura"
+      description="Prazos para acionamento de suporte ou assistência técnica"
+    >
+      <div class="form-grid-3">
+        <pd-select
+          label="Tipo de Garantia"
+          formControlName="warranty_type"
+          [options]="warrantyTypeOptions"
+        ></pd-select>
+
+        <pd-input
+          label="Vencimento da Garantia"
+          type="date"
+          formControlName="warranty_expiry"
+          hint="Garantia do fabricante"
+        ></pd-input>
+
+        <pd-input
+          label="Vencimento Garantia Estendida"
+          type="date"
+          formControlName="extended_warranty_expiry"
+          hint="Caso tenha contratado garantia extra"
+        ></pd-input>
+      </div>
+    </pd-form-section>
+
+    <!-- Form Footer Actions -->
+    <div class="form-footer-actions">
+      <pd-button variant="secondary" size="md" (clicked)="goBack()">
+        Cancelar
+      </pd-button>
+      <pd-button
+        type="submit"
+        variant="primary"
+        size="md"
+        [loading]="loading"
+      >
+        Salvar Item
+      </pd-button>
+    </div>
+
+  </form>
+</div>

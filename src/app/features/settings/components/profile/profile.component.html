@@ -1,0 +1,259 @@
+<div class="settings-page">
+  <!-- Page Header -->
+  <pd-page-header
+    title="Configurações"
+    subtitle="Gerencie seu perfil e preferências"
+    [hasIcon]="true">
+    <span header-icon>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+      </svg>
+    </span>
+  </pd-page-header>
+
+  <div class="settings-content">
+
+    <!-- ── INFORMAÇÕES DA CONTA ───────────────────────────── -->
+    <div class="settings-section">
+      <pd-form-section
+        title="Informações da Conta"
+        description="Dados do seu perfil registrado no sistema.">
+      </pd-form-section>
+
+      <pd-card [compact]="false">
+        <div class="account-info-card">
+          <div class="account-avatar">
+            <span class="avatar-initials">{{ userInitials }}</span>
+          </div>
+          <div class="account-details">
+            <h3 class="account-name">{{ fullName }}</h3>
+            <p class="account-email">{{ currentUser?.email }}</p>
+            <div class="account-badges">
+              <pd-badge
+                [status]="currentUser?.role === 'admin' ? 'active' : 'info'"
+                [label]="roleLabel">
+              </pd-badge>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Primeiro Nome</span>
+            <span class="info-value">{{ currentUser?.first_name || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Sobrenome</span>
+            <span class="info-value">{{ currentUser?.last_name || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">E-mail</span>
+            <span class="info-value">{{ currentUser?.email || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Função</span>
+            <span class="info-value">{{ roleLabel }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">ID do Espaço</span>
+            <span class="info-value code-value">{{ currentUser?.space_id || '—' }}</span>
+          </div>
+        </div>
+      </pd-card>
+    </div>
+
+    <!-- ── ALTERAR SENHA ──────────────────────────────────── -->
+    <div class="settings-section">
+      <pd-form-section
+        title="Alterar Senha"
+        description="Mantenha sua conta segura com uma senha forte.">
+      </pd-form-section>
+
+      <pd-card>
+        <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" novalidate>
+          <div class="form-fields">
+
+            <pd-input
+              label="Senha Atual"
+              type="password"
+              placeholder="••••••••"
+              [required]="true"
+              formControlName="current_password"
+              [error]="fieldError(passwordForm, 'current_password')">
+            </pd-input>
+
+            <pd-input
+              label="Nova Senha"
+              type="password"
+              placeholder="••••••••"
+              [required]="true"
+              formControlName="new_password"
+              hint="Mínimo 8 caracteres."
+              [error]="fieldError(passwordForm, 'new_password')">
+            </pd-input>
+
+            <pd-input
+              label="Confirmar Nova Senha"
+              type="password"
+              placeholder="••••••••"
+              [required]="true"
+              formControlName="confirm_password"
+              [error]="passwordMismatch ? 'As senhas não coincidem.' : fieldError(passwordForm, 'confirm_password')">
+            </pd-input>
+
+          </div>
+
+          <app-alert-message
+            *ngIf="passwordSuccess"
+            type="success"
+            [message]="passwordSuccess">
+          </app-alert-message>
+
+          <app-alert-message
+            *ngIf="passwordError"
+            type="error"
+            [message]="passwordError">
+          </app-alert-message>
+
+          <div class="form-actions">
+            <pd-button
+              type="submit"
+              variant="primary"
+              [loading]="passwordLoading"
+              [disabled]="passwordForm.invalid">
+              Alterar Senha
+            </pd-button>
+          </div>
+        </form>
+      </pd-card>
+    </div>
+
+    <!-- ── DADOS DO ESPAÇO ────────────────────────────────── -->
+    <div class="settings-section">
+      <pd-form-section
+        title="Dados do Espaço"
+        description="Informações do seu espaço de armazenamento.">
+      </pd-form-section>
+
+      <pd-card>
+        <!-- Load error -->
+        <app-alert-message
+          *ngIf="spaceLoadError"
+          type="error"
+          [message]="spaceLoadError">
+        </app-alert-message>
+
+        <!-- READ-ONLY view -->
+        <ng-container *ngIf="!spaceEditing && spaceInfo">
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Nome do Espaço</span>
+              <span class="info-value">{{ spaceInfo.name }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Endereço</span>
+              <span class="info-value">{{ spaceInfo.address }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Unidade / Número</span>
+              <span class="info-value">{{ spaceInfo.utility_unit_number || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Cota de Armazenamento</span>
+              <span class="info-value">{{ spaceInfo.storage_quota != null ? spaceInfo.storage_quota + ' itens' : '—' }}</span>
+            </div>
+          </div>
+
+          <app-alert-message
+            *ngIf="spaceSuccess"
+            type="success"
+            [message]="spaceSuccess">
+          </app-alert-message>
+
+          <div class="form-actions" *ngIf="isAdmin">
+            <pd-button
+              variant="secondary"
+              (clicked)="enableSpaceEdit()">
+              <svg slot="icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+              </svg>
+              Editar Espaço
+            </pd-button>
+          </div>
+        </ng-container>
+
+        <!-- EDIT form -->
+        <ng-container *ngIf="spaceEditing">
+          <form [formGroup]="spaceForm" (ngSubmit)="onSaveSpace()" novalidate>
+            <div class="form-fields">
+
+              <pd-input
+                label="Nome do Espaço"
+                type="text"
+                placeholder="Ex: Meu Depósito"
+                [required]="true"
+                formControlName="name"
+                [error]="fieldError(spaceForm, 'name')">
+              </pd-input>
+
+              <pd-input
+                label="Endereço"
+                type="text"
+                placeholder="Rua, número, cidade..."
+                [required]="true"
+                formControlName="address"
+                [error]="fieldError(spaceForm, 'address')">
+              </pd-input>
+
+              <pd-input
+                label="Unidade / Número"
+                type="text"
+                placeholder="Ex: Apt 42, Sala 3"
+                formControlName="utility_unit_number">
+              </pd-input>
+
+              <pd-input
+                label="Cota de Armazenamento (itens)"
+                type="number"
+                placeholder="Ex: 500"
+                formControlName="storage_quota"
+                [error]="fieldError(spaceForm, 'storage_quota')">
+              </pd-input>
+
+            </div>
+
+            <app-alert-message
+              *ngIf="spaceError"
+              type="error"
+              [message]="spaceError">
+            </app-alert-message>
+
+            <div class="form-actions form-actions--row">
+              <pd-button
+                variant="ghost"
+                type="button"
+                (clicked)="cancelSpaceEdit()">
+                Cancelar
+              </pd-button>
+              <pd-button
+                variant="primary"
+                type="submit"
+                [loading]="spaceLoading"
+                [disabled]="spaceForm.invalid">
+                Salvar Alterações
+              </pd-button>
+            </div>
+          </form>
+        </ng-container>
+
+        <!-- Loading skeleton while space is null -->
+        <ng-container *ngIf="!spaceInfo && !spaceLoadError">
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row short"></div>
+          <div class="skeleton-row"></div>
+        </ng-container>
+      </pd-card>
+    </div>
+
+  </div>
+</div>

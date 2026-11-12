@@ -1,0 +1,360 @@
+<!-- Header -->
+<pd-page-header
+  [title]="product?.name ?? 'Detalhes do Item'"
+  subtitle="Visualização e gerenciamento do patrimônio"
+  [showBack]="true"
+  (back)="goBack()"
+  [hasIcon]="true"
+>
+  <span header-icon>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 6h-2.18c.07-.44.18-.88.18-1.25C18 2.69 16.31 1 14.25 1c-1.21 0-2.21.57-2.95 1.4L10 4.01l-1.3-1.61C8.21 1.57 7.21 1 6 1 3.94 1 2.25 2.69 2.25 4.75c0 .37.1.81.17 1.25H2a2 2 0 00-2 2v2a2 2 0 002 2h.08L3 20c.08.84.84 1.5 1.72 1.5h14.56c.88 0 1.64-.66 1.72-1.5l.92-9.75H22a2 2 0 002-2V8a2 2 0 00-2-2zm-5.75-3.25c.55 0 1 .45 1 1 0 .56-.45 1-1 1-.56 0-1-.44-1-1 0-.55.44-1 1-1zM6 2.75c.55 0 1 .45 1 1 0 .56-.45 1-1 1-.56 0-1-.44-1-1 0-.55.44-1 1-1zM22 10H2V8h20v2z"/>
+    </svg>
+  </span>
+
+  <div title-extra *ngIf="product">
+    <pd-badge
+      [status]="getBadgeStatus(product.warranty_status)"
+      [label]="warrantyLabel(product.warranty_status)"
+      size="md"
+    ></pd-badge>
+  </div>
+
+  <div actions *ngIf="product && !editing">
+    <pd-button variant="secondary" size="sm" (clicked)="startEdit()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+      </svg>
+      Editar
+    </pd-button>
+
+    <pd-button variant="danger" size="sm" (clicked)="openDeactivate()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+      </svg>
+      Desativar
+    </pd-button>
+  </div>
+
+  <div actions *ngIf="editing">
+    <pd-button variant="secondary" size="sm" (clicked)="cancelEdit()">
+      Cancelar
+    </pd-button>
+    <pd-button variant="primary" size="sm" [loading]="saving" (clicked)="saveEdit()">
+      Salvar Alterações
+    </pd-button>
+  </div>
+</pd-page-header>
+
+<!-- Alerts -->
+<app-alert-message
+  *ngIf="errorMessage"
+  type="error"
+  [message]="errorMessage"
+  (dismissed)="errorMessage=''"
+></app-alert-message>
+<app-alert-message
+  *ngIf="successMessage"
+  type="success"
+  [message]="successMessage"
+  (dismissed)="successMessage=''"
+></app-alert-message>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-wrapper">
+  <app-loading-spinner [size]="32" label="Carregando detalhes do item..."></app-loading-spinner>
+</div>
+
+<!-- ================= VIEW MODE ================= -->
+<div *ngIf="!loading && product && !editing" class="detail-container">
+
+  <!-- Overview KPI Cards -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon metric-icon--price">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+        </svg>
+      </div>
+      <div class="metric-content">
+        <span class="metric-label">Valor de Aquisição</span>
+        <span class="metric-value price">{{ formatCurrency(product.purchase_value) }}</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon metric-icon--location">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+      </div>
+      <div class="metric-content">
+        <span class="metric-label">Localização</span>
+        <span class="metric-value">{{ product.location || 'Não definida' }}</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon metric-icon--warranty">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+        </svg>
+      </div>
+      <div class="metric-content">
+        <span class="metric-label">Status da Garantia</span>
+        <span class="metric-value highlight">{{ warrantyLabel(product.warranty_status) }}</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon metric-icon--date">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+        </svg>
+      </div>
+      <div class="metric-content">
+        <span class="metric-label">Data da Compra</span>
+        <span class="metric-value">{{ formatDate(product.purchase_date) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Sections Grid -->
+  <div class="detail-grid">
+
+    <!-- Card 1: Identificação & Especificações -->
+    <pd-card title="Identificação & Especificações" subtitle="Detalhes do equipamento e fabricante">
+      <div class="detail-fields">
+        <div class="detail-field">
+          <span class="field-label">Nome do Item</span>
+          <span class="field-value highlight">{{ product.name }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="field-label">Categoria</span>
+          <div class="field-value">
+            <pd-badge status="purple" [label]="product.category"></pd-badge>
+          </div>
+        </div>
+        <div class="detail-field">
+          <span class="field-label">Marca</span>
+          <span class="field-value">{{ product.brand }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="field-label">Modelo</span>
+          <span class="field-value">{{ product.model }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="field-label">Número de Série</span>
+          <span class="field-value mono code-value">{{ product.serial_number || 'Não informado' }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="field-label">ID do Item</span>
+          <span class="field-value mono sub-code">{{ product.id }}</span>
+        </div>
+      </div>
+    </pd-card>
+
+    <!-- Card 2: Localização & Status Patrimonial -->
+    <pd-card title="Patrimônio & Status" subtitle="Local de guarda e situação cadastral">
+      <div class="detail-fields">
+        <div class="detail-field">
+          <span class="field-label">Local de Armazenamento</span>
+          <span class="field-value highlight">{{ product.location || '—' }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="field-label">Situação Cadastral</span>
+          <div class="field-value">
+            <pd-badge
+              [status]="product.status === 'active' || product.is_active ? 'active' : 'neutral'"
+              [label]="product.status === 'active' || product.is_active ? 'Ativo no Acervo' : 'Inativo / Baixado'"
+            ></pd-badge>
+          </div>
+        </div>
+        <div class="detail-field">
+          <span class="field-label">Valor de Aquisição</span>
+          <span class="field-value price">{{ formatCurrency(product.purchase_value) }}</span>
+        </div>
+        <div class="detail-field">
+          <span class="field-label">Data de Aquisição</span>
+          <span class="field-value">{{ formatDate(product.purchase_date) }}</span>
+        </div>
+        <div class="detail-field" *ngIf="product.space_id">
+          <span class="field-label">ID do Espaço</span>
+          <span class="field-value mono sub-code">{{ product.space_id }}</span>
+        </div>
+      </div>
+    </pd-card>
+
+    <!-- Card 3: Garantia & Cobertura -->
+    <pd-card title="Garantia & Assistência" subtitle="Termos e datas limite de cobertura" class="grid-full-width">
+      <div class="warranty-card-content">
+        <div class="warranty-summary">
+          <div class="warranty-badge-box">
+            <pd-badge
+              [status]="getBadgeStatus(product.warranty_status)"
+              [label]="warrantyLabel(product.warranty_status)"
+              size="md"
+            ></pd-badge>
+          </div>
+          <p class="warranty-desc">
+            Controle de cobertura para acionamento de assistência técnica ou troca em garantia.
+          </p>
+        </div>
+
+        <div class="detail-fields warranty-fields">
+          <div class="detail-field">
+            <span class="field-label">Tipo de Cobertura</span>
+            <span class="field-value">{{ product.warranty_type || 'Não informada' }}</span>
+          </div>
+          <div class="detail-field">
+            <span class="field-label">Vencimento da Garantia</span>
+            <span class="field-value highlight">{{ formatDate(product.warranty_expiry) }}</span>
+          </div>
+          <div class="detail-field">
+            <span class="field-label">Garantia Estendida</span>
+            <span class="field-value">{{ formatDate(product.extended_warranty_expiry) }}</span>
+          </div>
+        </div>
+      </div>
+    </pd-card>
+
+  </div>
+</div>
+
+<!-- ================= EDIT MODE ================= -->
+<div *ngIf="!loading && product && editing" class="edit-container">
+  <form [formGroup]="editForm" (ngSubmit)="saveEdit()" novalidate>
+
+    <pd-form-section title="Informações Básicas">
+      <div class="form-grid-2">
+        <pd-input
+          label="Nome do Item"
+          formControlName="name"
+          [required]="true"
+          [error]="getError('name')"
+        ></pd-input>
+
+        <pd-select
+          label="Categoria"
+          formControlName="category"
+          [options]="categoryOptions"
+          [required]="true"
+          [error]="getError('category')"
+        ></pd-select>
+      </div>
+
+      <div class="form-grid-2">
+        <pd-input
+          label="Marca"
+          formControlName="brand"
+          [required]="true"
+          [error]="getError('brand')"
+        ></pd-input>
+
+        <pd-input
+          label="Modelo"
+          formControlName="model"
+          [required]="true"
+          [error]="getError('model')"
+        ></pd-input>
+      </div>
+
+      <pd-input
+        label="Localização"
+        formControlName="location"
+        [required]="true"
+        [error]="getError('location')"
+      ></pd-input>
+    </pd-form-section>
+
+    <pd-form-section title="Dados de Compra">
+      <div class="form-grid-3">
+        <pd-input
+          label="Valor de Compra (R$)"
+          type="number"
+          formControlName="purchase_value"
+          [required]="true"
+          [error]="getError('purchase_value')"
+        ></pd-input>
+
+        <pd-input
+          label="Data da Compra"
+          type="date"
+          formControlName="purchase_date"
+        ></pd-input>
+
+        <pd-input
+          label="Número de Série"
+          formControlName="serial_number"
+        ></pd-input>
+      </div>
+    </pd-form-section>
+
+    <pd-form-section title="Garantia">
+      <div class="form-grid-3">
+        <pd-select
+          label="Tipo de Garantia"
+          formControlName="warranty_type"
+          [options]="warrantyTypeOptions"
+        ></pd-select>
+
+        <pd-input
+          label="Vencimento da Garantia"
+          type="date"
+          formControlName="warranty_expiry"
+        ></pd-input>
+
+        <pd-input
+          label="Garantia Estendida"
+          type="date"
+          formControlName="extended_warranty_expiry"
+        ></pd-input>
+      </div>
+    </pd-form-section>
+
+    <div class="form-footer-actions">
+      <pd-button variant="secondary" size="md" (clicked)="cancelEdit()">
+        Cancelar
+      </pd-button>
+      <pd-button type="submit" variant="primary" size="md" [loading]="saving">
+        Salvar Alterações
+      </pd-button>
+    </div>
+
+  </form>
+</div>
+
+<!-- Deactivate Modal using PdModal -->
+<pd-modal
+  [isOpen]="showDeactivateModal"
+  title="Desativar Item"
+  subtitle="Confirmação de baixa patrimonial"
+  size="sm"
+  (close)="closeDeactivate()"
+>
+  <p>Informe o motivo da desativação de <strong>{{ product?.name }}</strong>:</p>
+
+  <pd-input
+    label="Motivo da Desativação"
+    placeholder="Ex: Vendido, descartado, doado, extraviado..."
+    [value]="deactivateReason"
+    (inputChange)="deactivateReason = $event"
+    [required]="true"
+    hint="Descreva o motivo da desativação deste item"
+  ></pd-input>
+
+  <div modal-actions>
+    <pd-button variant="secondary" size="sm" (clicked)="closeDeactivate()">
+      Cancelar
+    </pd-button>
+    <pd-button
+      variant="danger"
+      size="sm"
+      [disabled]="!deactivateReason.trim() || deactivating"
+      [loading]="deactivating"
+      (clicked)="confirmDeactivate()"
+    >
+      Confirmar Desativação
+    </pd-button>
+  </div>
+</pd-modal>

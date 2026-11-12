@@ -1,0 +1,13 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.layout-content {
+  flex: 1;
+  margin-left: 220px;
+  overflow-y: auto;
+  background: var(--pd-bg-primary);
+  padding: 24px;
+}

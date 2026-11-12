@@ -1,0 +1,117 @@
+.filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+
+  .filter-search-col {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .filter-select-col {
+    width: 190px;
+
+    ::ng-deep .pd-form-group {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+/* Product Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.product-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.product-category-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--pd-radius-sm);
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--pd-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pd-text-primary);
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-brand {
+  font-size: 0.8125rem;
+  color: var(--pd-text-muted);
+  margin: 0 0 12px 0;
+}
+
+.product-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  padding-top: 10px;
+  border-top: 1px solid var(--pd-border-subtle);
+  margin-top: auto;
+}
+
+.product-category {
+  color: var(--pd-text-secondary);
+}
+
+.product-value {
+  font-weight: 600;
+  color: var(--pd-accent-light);
+}
+
+.product-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--pd-text-muted);
+  margin-top: 8px;
+}
+
+.product-card-footer {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.view-details-action {
+  font-size: 0.785rem;
+  color: var(--pd-accent-light);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform var(--pd-transition);
+
+  &:hover {
+    transform: translateX(3px);
+  }
+}
